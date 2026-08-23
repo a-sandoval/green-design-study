@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: greendesign
+      POSTGRES_USER: greendesign
+      POSTGRES_PASSWORD: greendesign
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../infra/postgres/init-monolith.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ../infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+
+  monolith:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/greendesign?currentSchema=tienda
+      SPRING_DATASOURCE_USERNAME: greendesign
+      SPRING_DATASOURCE_PASSWORD: greendesign
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: "3.0"
+          memory: 768M

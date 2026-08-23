@@ -1,0 +1,73 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: greendesign
+      POSTGRES_USER: greendesign
+      POSTGRES_PASSWORD: greendesign
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../infra/postgres/init-microservices.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ../infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+
+  clientes-service:
+    build: clientes-service/
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/greendesign?currentSchema=svc_clientes
+      SPRING_DATASOURCE_USERNAME: greendesign
+      SPRING_DATASOURCE_PASSWORD: greendesign
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+
+  productos-service:
+    build: productos-service/
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/greendesign?currentSchema=svc_productos
+      SPRING_DATASOURCE_USERNAME: greendesign
+      SPRING_DATASOURCE_PASSWORD: greendesign
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+
+  pedidos-service:
+    build: pedidos-service/
+    depends_on:
+      - postgres
+      - clientes-service
+      - productos-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/greendesign?currentSchema=svc_pedidos
+      SPRING_DATASOURCE_USERNAME: greendesign
+      SPRING_DATASOURCE_PASSWORD: greendesign
+      SERVER_PORT: 8083
+      CLIENTES_SERVICE_URL: http://clientes-service:8081
+      PRODUCTOS_SERVICE_URL: http://productos-service:8082
+    ports:
+      - "8083:8083"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M

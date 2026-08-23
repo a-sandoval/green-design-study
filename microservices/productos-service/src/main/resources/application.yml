@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/greendesign?currentSchema=svc_productos
+    username: greendesign
+    password: greendesign
+    hikari:
+      maximum-pool-size: 7
+      minimum-idle: 2
+
+server:
+  port: 8082

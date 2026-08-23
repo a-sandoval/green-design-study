@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/greendesign?currentSchema=svc_pedidos
+    username: greendesign
+    password: greendesign
+    hikari:
+      maximum-pool-size: 7
+      minimum-idle: 2
+
+server:
+  port: 8083
+
+services:
+  clientes-url: ${CLIENTES_SERVICE_URL:http://localhost:8081}
+  productos-url: ${PRODUCTOS_SERVICE_URL:http://localhost:8082}
