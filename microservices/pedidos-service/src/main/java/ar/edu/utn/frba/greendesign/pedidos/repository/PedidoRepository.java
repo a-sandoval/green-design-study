@@ -21,7 +21,7 @@ public class PedidoRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final RowMapper<Pedido> PEDIDO_MAPPER = (rs, _) -> new Pedido(
+    private static final RowMapper<Pedido> PEDIDO_MAPPER = (rs, rowNum) -> new Pedido(
             rs.getLong("id"),
             rs.getLong("cliente_id"),
             rs.getTimestamp("fecha").toLocalDateTime(),
@@ -30,7 +30,7 @@ public class PedidoRepository {
             List.of()
     );
 
-    private static final RowMapper<ItemPedido> ITEM_MAPPER = (rs, _) -> new ItemPedido(
+    private static final RowMapper<ItemPedido> ITEM_MAPPER = (rs, rowNum) -> new ItemPedido(
             rs.getLong("id"),
             rs.getLong("pedido_id"),
             rs.getLong("producto_id"),

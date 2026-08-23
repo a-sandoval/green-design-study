@@ -17,7 +17,7 @@ public class ProductoRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final RowMapper<Producto> MAPPER = (rs, _) -> new Producto(
+    private static final RowMapper<Producto> MAPPER = (rs, rowNum) -> new Producto(
             rs.getLong("id"),
             rs.getString("nombre"),
             rs.getString("descripcion"),
@@ -40,7 +40,7 @@ public class ProductoRepository {
 
     public List<Producto> findByIds(List<Long> ids) {
         if (ids.isEmpty()) return List.of();
-        String placeholders = String.join(",", ids.stream().map(_ -> "?").toList());
+        String placeholders = String.join(",", ids.stream().map(x -> "?").toList());
         String sql = "SELECT id, nombre, descripcion, precio, stock FROM productos WHERE id IN (" + placeholders + ")";
         return jdbc.query(sql, MAPPER, ids.toArray());
     }

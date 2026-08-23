@@ -16,7 +16,7 @@ public class ClienteRepository {
 
     private final JdbcTemplate jdbc;
 
-    private static final RowMapper<Cliente> MAPPER = (rs, _) -> new Cliente(
+    private static final RowMapper<Cliente> MAPPER = (rs, rowNum) -> new Cliente(
             rs.getLong("id"),
             rs.getString("nombre"),
             rs.getString("email"),
@@ -38,7 +38,7 @@ public class ClienteRepository {
 
     public List<Cliente> findByIds(List<Long> ids) {
         if (ids.isEmpty()) return List.of();
-        String placeholders = String.join(",", ids.stream().map(_ -> "?").toList());
+        String placeholders = String.join(",", ids.stream().map(x -> "?").toList());
         String sql = "SELECT id, nombre, email, direccion FROM clientes WHERE id IN (" + placeholders + ")";
         return jdbc.query(sql, MAPPER, ids.toArray());
     }
