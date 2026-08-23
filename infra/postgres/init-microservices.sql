@@ -1,5 +1,6 @@
 -- Schema aislado para clientes-service
 CREATE SCHEMA IF NOT EXISTS svc_clientes;
+SET search_path TO svc_clientes;
 
 CREATE TABLE svc_clientes.clientes (
     id          BIGSERIAL PRIMARY KEY,
@@ -10,6 +11,7 @@ CREATE TABLE svc_clientes.clientes (
 
 -- Schema aislado para productos-service
 CREATE SCHEMA IF NOT EXISTS svc_productos;
+SET search_path TO svc_productos;
 
 CREATE TABLE svc_productos.productos (
     id          BIGSERIAL PRIMARY KEY,
@@ -21,6 +23,7 @@ CREATE TABLE svc_productos.productos (
 
 -- Schema aislado para pedidos-service (sin FK cruzadas)
 CREATE SCHEMA IF NOT EXISTS svc_pedidos;
+SET search_path TO svc_pedidos;
 
 CREATE TABLE svc_pedidos.pedidos (
     id          BIGSERIAL PRIMARY KEY,

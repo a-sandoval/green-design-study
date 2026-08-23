@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     volumes:
       - ../infra/postgres/init-monolith.sql:/docker-entrypoint-initdb.d/01-init.sql
+      - ../infra/postgres/seed-monolith.sql:/docker-entrypoint-initdb.d/02-seed.sql
       - ../infra/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     deploy:

@@ -1,4 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS tienda;
+SET search_path TO tienda;
 
 CREATE TABLE tienda.clientes (
     id          BIGSERIAL PRIMARY KEY,
