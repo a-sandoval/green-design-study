@@ -2,7 +2,14 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 
+// Para monolito: BASE_URL=http://localhost:8080 (las 3 env opcionales quedan iguales)
+// Para microservicios: BASE_URL=http://localhost:8083
+//   CLIENTES_URL=http://localhost:8081  PRODUCTOS_URL=http://localhost:8082
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
+const CLIENTES_URL = __ENV.CLIENTES_URL || BASE_URL;
+const PRODUCTOS_URL = __ENV.PRODUCTOS_URL || BASE_URL;
+const PEDIDOS_URL = BASE_URL;
+
 const READ_RATIO = parseInt(__ENV.READ_RATIO || '80');
 const SEED = parseInt(__ENV.SEED || '42');
 const DURATION = __ENV.DURATION || '60s';
@@ -44,12 +51,12 @@ function doRead() {
 
   if (op <= 40) {
     const id = randomInt(1, NUM_CLIENTES);
-    res = http.get(`${BASE_URL}/api/clientes/${id}`);
+    res = http.get(`${CLIENTES_URL}/api/clientes/${id}`);
   } else if (op <= 80) {
     const id = randomInt(1, NUM_PRODUCTOS);
-    res = http.get(`${BASE_URL}/api/productos/${id}`);
+    res = http.get(`${PRODUCTOS_URL}/api/productos/${id}`);
   } else {
-    res = http.get(`${BASE_URL}/api/pedidos`);
+    res = http.get(`${PEDIDOS_URL}/api/pedidos`);
   }
 
   check(res, { 'read status 2xx': (r) => r.status >= 200 && r.status < 300 });
@@ -69,7 +76,7 @@ function doWrite() {
         { productoId: randomInt(11, 20), cantidad: 1 },
       ],
     });
-    res = http.post(`${BASE_URL}/api/pedidos`, payload, {
+    res = http.post(`${PEDIDOS_URL}/api/pedidos`, payload, {
       headers: { 'Content-Type': 'application/json' },
     });
   } else if (op <= 75) {
@@ -78,7 +85,7 @@ function doWrite() {
       email: `k6_${randomInt(1, 99999)}@test.com`,
       direccion: `Calle Test ${randomInt(1, 999)}`,
     });
-    res = http.post(`${BASE_URL}/api/clientes`, payload, {
+    res = http.post(`${CLIENTES_URL}/api/clientes`, payload, {
       headers: { 'Content-Type': 'application/json' },
     });
   } else {
@@ -88,7 +95,7 @@ function doWrite() {
       precio: randomInt(1000, 500000),
       stock: randomInt(10, 1000),
     });
-    res = http.post(`${BASE_URL}/api/productos`, payload, {
+    res = http.post(`${PRODUCTOS_URL}/api/productos`, payload, {
       headers: { 'Content-Type': 'application/json' },
     });
   }

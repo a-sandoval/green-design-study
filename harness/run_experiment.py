@@ -41,11 +41,15 @@ ARM_CONFIG = {
     "monolith": {
         "compose_dir": PROJECT_ROOT / "monolith",
         "base_url": "http://localhost:8080",
+        "clientes_url": "http://localhost:8080",
+        "productos_url": "http://localhost:8080",
         "health_url": "http://localhost:8080/api/clientes",
     },
     "microservices": {
         "compose_dir": PROJECT_ROOT / "microservices",
         "base_url": "http://localhost:8083",
+        "clientes_url": "http://localhost:8081",
+        "productos_url": "http://localhost:8082",
         "health_url": "http://localhost:8081/api/clientes",
     },
 }
@@ -87,21 +91,29 @@ def wait_for_health(url, timeout=120):
     raise TimeoutError(f"Servicio no respondió en {timeout}s: {url}")
 
 
-def run_warmup(base_url, seconds):
+def k6_env_args(config):
+    return (
+        f'--env BASE_URL={config["base_url"]} '
+        f'--env CLIENTES_URL={config["clientes_url"]} '
+        f'--env PRODUCTOS_URL={config["productos_url"]}'
+    )
+
+
+def run_warmup(config, seconds):
     print(f"  Warm-up: {seconds}s de carga ligera...")
     run_cmd(
-        f'k6 run --env BASE_URL={base_url} --env READ_RATIO=80 '
+        f'k6 run {k6_env_args(config)} --env READ_RATIO=80 '
         f'--env DURATION={seconds}s --env VUS=5 --env SEED=1 '
         f'"{K6_SCENARIO}" --quiet',
     )
 
 
-def run_workload(base_url, read_ratio, duration, vus, seed):
+def run_workload(config, read_ratio, duration, vus, seed):
     print(f"  Ejecutando carga: {duration}s, {vus} VUs, L:E={read_ratio}:{100 - read_ratio}, seed={seed}")
     result = run_cmd(
-        f'k6 run --env BASE_URL={base_url} --env READ_RATIO={read_ratio} '
+        f'k6 run {k6_env_args(config)} --env READ_RATIO={read_ratio} '
         f'--env DURATION={duration}s --env VUS={vus} --env SEED={seed} '
-        f'"{K6_SCENARIO}" --summary-export=- --quiet',
+        f'"{K6_SCENARIO}" --quiet',
         capture=True,
         check=False,
     )
@@ -163,7 +175,7 @@ def main():
                     wait_for_health("http://localhost:8082/api/productos")
                     wait_for_health("http://localhost:8083/api/pedidos")
 
-                run_warmup(config["base_url"], args.warmup_seconds)
+                run_warmup(config, args.warmup_seconds)
 
                 tracker = EmissionsTracker(
                     project_name=run_id,
@@ -174,7 +186,7 @@ def main():
                 tracker.start()
 
                 k6_output = run_workload(
-                    config["base_url"], args.read_ratio,
+                    config, args.read_ratio,
                     args.duration, args.vus, seed,
                 )
 
