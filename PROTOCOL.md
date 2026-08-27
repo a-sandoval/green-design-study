@@ -34,10 +34,12 @@ Diseño factorial 2 × 3. Cada celda: 30 repeticiones.
 | Framework | Spring Boot 3.3.5 | Mismo framework y versión |
 | Base de datos | PostgreSQL 16 | Misma versión y config |
 | Lógica de negocio | Módulo `domain` compartido | Elimina variación en validación |
-| Límites de recursos Docker | Monolito: 3 CPU + 768M; Micros: 1 CPU + 256M × 3 | Presupuesto total normalizado: 5 CPU, 1.25 GB |
+| Recursos Docker (app) | Monolito: 1×(3 CPU + 768M); Micros: 3×(1 CPU + 256M) = 3 CPU + 768M | Simétrico entre brazos |
+| Recursos Docker (BD) | 1 instancia PostgreSQL en ambos brazos: 2 CPU + 512M | En micros, misma instancia con 3 schemas separados |
+| Presupuesto total por brazo | 5 CPU + 1280 MB | App + BD idéntico en ambos brazos |
 | Pool de conexiones DB | Monolito: 20; Micros: 7 × 3 = 21 | Normalizado |
 | Datos seed | 20 clientes + 30 productos | Idénticos en ambos brazos |
-| PostgreSQL config | autovacuum=off, logging=off durante medición | Reduce ruido |
+| PostgreSQL config | autovacuum=off, logging=off durante medición | Idéntica en ambos brazos, reduce ruido |
 | Semilla RNG del workload | `42 + rep_number` | Reproducibilidad |
 
 ## Protocolo de ejecución
