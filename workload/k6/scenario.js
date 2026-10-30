@@ -82,7 +82,7 @@ function doWrite() {
   } else if (op <= 75) {
     const payload = JSON.stringify({
       nombre: `Cliente k6 ${randomInt(1, 99999)}`,
-      email: `k6_${randomInt(1, 99999)}@test.com`,
+      email: `k6_${SEED}_${__VU}_${__ITER}@test.com`,
       direccion: `Calle Test ${randomInt(1, 999)}`,
     });
     res = http.post(`${CLIENTES_URL}/api/clientes`, payload, {
