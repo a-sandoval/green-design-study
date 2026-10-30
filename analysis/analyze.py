@@ -18,6 +18,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 import numpy as np
 
 try:
@@ -142,7 +145,7 @@ def plot_boxplots(data, output_dir):
 
         bp = ax.boxplot(
             [mono, micro],
-            labels=["Monolito", "Microservicios"],
+            tick_labels=["Monolito", "Microservicios"],
             patch_artist=True,
             widths=0.5,
         )
