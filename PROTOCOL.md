@@ -52,7 +52,7 @@ Diseño factorial 2 × 3. Cada celda: 30 repeticiones.
 4. Esperar 5 min de reposo antes de comenzar
 5. Verificar que DVFS/turbo boost esté en estado consistente (perfil "Equilibrado")
 
-Cumplimiento de la pre-medición en la campaña ejecutada: el perfil de energía "Equilibrado" y la suspensión/hibernación desactivadas con corriente alterna se verificaron con `powercfg` en la sesión de trabajo del 2026-09-12, y las aplicaciones no esenciales se cerraron antes del lanzamiento; ninguna de estas verificaciones quedó registrada en los datos de la campaña. No se registró si se desactivaron Windows Update y el antivirus ni si se respetó la espera de 5 min.
+Cumplimiento de la pre-medición en la campaña ejecutada: el perfil de energía "Equilibrado" y la suspensión/hibernación desactivadas con corriente alterna se verificaron con `powercfg` en la sesión de trabajo del 2026-09-12, y las aplicaciones no esenciales se cerraron antes del lanzamiento; ninguna de estas verificaciones quedó registrada en los datos de la campaña. Según el responsable de la campaña, Windows Update y el antivirus (Windows Defender) estaban desactivados durante la ejecución; ese estado no quedó registrado en los datos. No se registró si se respetó la espera de 5 min.
 
 ### Por cada repetición
 
